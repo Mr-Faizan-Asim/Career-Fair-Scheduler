@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# Career Fair Scheduling Web Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A professional web application designed for managing and displaying career fair schedules. Built with React.js and Firebase, this project offers a dynamic schedule display for attendees and an intuitive admin panel for event management.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Overview
 
-### `npm start`
+The Career Fair Scheduling Web Application is built to streamline the process of managing and presenting career fair events. Organizers can easily add, update, and delete details such as interview and test schedules, company participation, and venue information—all stored in Firebase Firestore. Meanwhile, attendees enjoy a visually appealing and responsive interface to explore schedules, filter events, and view detailed event information, including the grand **UET Career Fair 2025**.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+- **Real-Time Schedule Updates:**  
+  Leverages Firebase Firestore to instantly synchronize any changes made by administrators.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Admin Panel:**  
+  A dedicated interface for managing schedules with a simple username/password login (for development purposes) using credentials stored in a `.env` file.
 
-### `npm run build`
+- **Dynamic and Responsive UI:**  
+  Built using React.js and Material-UI (MUI) to ensure a modern, responsive design that works seamlessly across devices.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Event Details Page:**  
+  A dedicated page for detailed event information with engaging animations provided by Framer Motion.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Custom Theming:**  
+  The design is inspired by UET Lahore's branding with a deep navy blue and rich gold color scheme.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Prerequisites
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- [Node.js](https://nodejs.org/) (v14 or higher recommended)
+- [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
