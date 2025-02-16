@@ -1,13 +1,17 @@
+// src/components/Layout.js
+import React from 'react';
 import { Outlet } from 'react-router-dom';
-import NavigationBar from './AppBar';
+import Navigation from './Navigation';
+import Footer from './Footer';
 
 export default function Layout() {
   return (
-    <div className="min-h-screen">
-      <NavigationBar />
-      <main className="p-4">
+    <div>
+      <Navigation />
+      <main style={{ minHeight: '80vh', padding: '20px' }}>
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 }
