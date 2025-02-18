@@ -20,8 +20,3 @@ const app = initializeApp(firebaseConfig);
 // Then initialize services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-console.log("Firebase API Key:", process.env.REACT_APP_FIREBASE_API_KEY);
-
-// Add at the end of firebase.js
-console.log("Firebase initialized:", app);
-console.log("Auth service:", auth);
