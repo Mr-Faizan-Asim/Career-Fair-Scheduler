@@ -9,7 +9,12 @@ export default function ScheduleList() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const q = query(collection(db, 'ScheduleFair'), orderBy('date', 'asc'));
+    // Query ordering by date and then by time (requires composite index if using Firestore)
+    const q = query(
+      collection(db, 'ScheduleFair'),
+      orderBy('date', 'asc'),
+      orderBy('time', 'asc')
+    );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setSchedules(list);
@@ -17,14 +22,23 @@ export default function ScheduleList() {
     return () => unsubscribe();
   }, []);
 
+  // Filter schedules based on the company search term
   const filteredSchedules = schedules.filter(schedule =>
     schedule.company.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Check if the current time is more than one hour after the event start time
   const checkEventStatus = (date, time) => {
     const eventDateTime = new Date(`${date}T${time}`);
+    const oneHourLater = new Date(eventDateTime.getTime() + 60 * 60 * 1000);
     const now = new Date();
-    return now > eventDateTime; // true if event is done
+    return now > oneHourLater;
+  };
+
+  // Format the event time to display in 12-hour format (e.g., "1:30 PM")
+  const formatTime = (date, time) => {
+    const eventDateTime = new Date(`${date}T${time}`);
+    return eventDateTime.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' });
   };
 
   return (
@@ -78,7 +92,7 @@ export default function ScheduleList() {
                   {schedule.eventType.toUpperCase()}
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 1 }}>
-                  {schedule.date} at {schedule.time}
+                  {schedule.date} at {formatTime(schedule.date, schedule.time)}
                 </Typography>
                 <Chip label={schedule.location} sx={{ mt: 1 }} />
               </CardContent>
