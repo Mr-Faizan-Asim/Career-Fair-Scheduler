@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 import {
   Container,
@@ -51,15 +51,17 @@ export default function ScheduleList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Create a Firestore query that orders schedules by date and then by time in ascending order.
-    const q = query(
-      collection(db, 'ScheduleFair'),
-      orderBy('date', 'asc'),
-      orderBy('time', 'asc')
-    );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    // Fetch data from the "ScheduleFair" collection without ordering.
+    const colRef = collection(db, 'ScheduleFair');
+    const unsubscribe = onSnapshot(colRef, (snapshot) => {
       const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setSchedules(list);
+      // Sort the list on the frontend by converting the date and time into a Date object.
+      const sortedList = list.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.time}`);
+        const dateB = new Date(`${b.date}T${b.time}`);
+        return dateA - dateB;
+      });
+      setSchedules(sortedList);
       setLoading(false);
     });
     // Cleanup the listener on unmount.
