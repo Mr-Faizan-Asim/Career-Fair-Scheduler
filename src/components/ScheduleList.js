@@ -10,11 +10,17 @@ import {
   Chip,
   TextField,
   InputAdornment,
-  Box
+  Box,
+  CircularProgress
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
-// Helper to convert a 24-hour time string (e.g., "13:30") to 12-hour format with AM/PM.
+/**
+ * Converts a 24-hour time string (e.g., "13:30") to 12-hour format with AM/PM.
+ *
+ * @param {string} timeStr - The time string in "HH:mm" format.
+ * @returns {string} The formatted time in 12-hour format.
+ */
 const convertTo12Hour = (timeStr) => {
   const [hourStr, minute] = timeStr.split(':');
   let hour = parseInt(hourStr, 10);
@@ -24,11 +30,17 @@ const convertTo12Hour = (timeStr) => {
   return `${hour}:${minute} ${suffix}`;
 };
 
-// Helper to add hours to a time string and return the new time in 12-hour format.
+/**
+ * Adds a specified number of hours to a time string and returns the new time in 12-hour format.
+ *
+ * @param {string} timeStr - The original time string in "HH:mm" format.
+ * @param {number} hrsToAdd - The number of hours to add.
+ * @returns {string} The new time in 12-hour format.
+ */
 const addHoursToTime = (timeStr, hrsToAdd) => {
   const [hourStr, minute] = timeStr.split(':');
   let newHour = (parseInt(hourStr, 10) + hrsToAdd) % 24;
-  // Format newHour as two-digit if needed for proper parsing.
+  // Ensure the new hour is formatted as two digits if needed.
   const newTimeStr = `${newHour < 10 ? '0' + newHour : newHour}:${minute}`;
   return convertTo12Hour(newTimeStr);
 };
@@ -36,9 +48,10 @@ const addHoursToTime = (timeStr, hrsToAdd) => {
 export default function ScheduleList() {
   const [schedules, setSchedules] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Query to order schedules by date and time in ascending order.
+    // Create a Firestore query that orders schedules by date and then by time in ascending order.
     const q = query(
       collection(db, 'ScheduleFair'),
       orderBy('date', 'asc'),
@@ -47,21 +60,48 @@ export default function ScheduleList() {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setSchedules(list);
+      setLoading(false);
     });
+    // Cleanup the listener on unmount.
     return () => unsubscribe();
   }, []);
 
+  // Filter schedules based on the company search term.
   const filteredSchedules = schedules.filter((schedule) =>
     schedule.company.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Check if current time is more than one hour after the event start time.
+  /**
+   * Checks if the current time is more than one hour past the event start time.
+   *
+   * @param {string} date - The event date in "YYYY-MM-DD" format.
+   * @param {string} time - The event start time in "HH:mm" format.
+   * @returns {boolean} True if more than one hour has passed since the event started.
+   */
   const checkEventStatus = (date, time) => {
     const eventDateTime = new Date(`${date}T${time}`);
     const oneHourLater = new Date(eventDateTime.getTime() + 60 * 60 * 1000);
     const now = new Date();
     return now > oneHourLater;
   };
+
+  // Show a loading indicator while data is being fetched.
+  if (loading) {
+    return (
+      <Container
+        maxWidth="lg"
+        sx={{
+          mt: 4,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '50vh'
+        }}
+      >
+        <CircularProgress />
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -84,47 +124,56 @@ export default function ScheduleList() {
         sx={{ mb: 4 }}
       />
       <Grid container spacing={3}>
-        {filteredSchedules.map((schedule) => (
-          <Grid item xs={12} sm={6} md={4} key={schedule.id}>
-            <Card
-              sx={{
-                borderLeft: '5px solid',
-                borderColor:
-                  schedule.eventType === 'interview'
-                    ? 'secondary.main'
-                    : schedule.eventType === 'test'
-                    ? 'error.main'
-                    : 'primary.main',
-                position: 'relative'
-              }}
-            >
-              <Box
+        {filteredSchedules.length > 0 ? (
+          filteredSchedules.map((schedule) => (
+            <Grid item xs={12} sm={6} md={4} key={schedule.id}>
+              <Card
                 sx={{
-                  width: 16,
-                  height: 16,
-                  borderRadius: '50%',
-                  backgroundColor: checkEventStatus(schedule.date, schedule.time)
-                    ? 'red'
-                    : 'transparent',
-                  position: 'absolute',
-                  top: 16,
-                  right: 16
+                  borderLeft: '5px solid',
+                  borderColor:
+                    schedule.eventType === 'workshop'
+                      ? 'secondary.main'
+                      : schedule.eventType === 'test'
+                      ? 'error.main'
+                      : 'primary.main',
+                  position: 'relative'
                 }}
-              />
-              <CardContent>
-                <Typography variant="h6">{schedule.company}</Typography>
-                <Typography variant="subtitle1" color="textSecondary">
-                  {schedule.eventType.toUpperCase()}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  {schedule.date} at {convertTo12Hour(schedule.time)} ending at{' '}
-                  {addHoursToTime(schedule.time, 2)}
-                </Typography>
-                <Chip label={schedule.location} sx={{ mt: 1 }} />
-              </CardContent>
-            </Card>
+              >
+                {/* Red dot indicator if event is past one hour from start */}
+                <Box
+                  sx={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    backgroundColor: checkEventStatus(schedule.date, schedule.time)
+                      ? 'red'
+                      : 'transparent',
+                    position: 'absolute',
+                    top: 16,
+                    right: 16
+                  }}
+                />
+                <CardContent>
+                  <Typography variant="h6">{schedule.company}</Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    {schedule.eventType.toUpperCase()}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    {schedule.date} at {convertTo12Hour(schedule.time)} ending at{' '}
+                    {addHoursToTime(schedule.time, 2)}
+                  </Typography>
+                  <Chip label={schedule.location} sx={{ mt: 1 }} />
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <Grid item xs={12}>
+            <Typography variant="h6" align="center">
+              No schedules found.
+            </Typography>
           </Grid>
-        ))}
+        )}
       </Grid>
     </Container>
   );
