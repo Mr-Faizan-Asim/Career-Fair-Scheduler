@@ -71,7 +71,7 @@ export default function ScheduleForm({ schedule, clearSelection }) {
             >
               <MenuItem value="interview">Interview</MenuItem>
               <MenuItem value="test">Test</MenuItem>
-              <MenuItem value="workshop">Workshop</MenuItem>
+              <MenuItem value="workshop">Interview & Test</MenuItem>
             </TextField>
           </Grid>
           <Grid item xs={12} sm={6}>
