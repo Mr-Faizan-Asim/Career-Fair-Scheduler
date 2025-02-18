@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <Box sx={{ textAlign: 'center', p: 2, backgroundColor: '#002147', color: 'white' }}>
       <Typography variant="body2">
-        &copy; {new Date().getFullYear()} UET CAREER FAIR 2025. All rights reserved. Developed by{' '}
+        &copy;UET CAREER FAIR. All rights reserved. Developed by{' '}
         <Link
           href="https://www.linkedin.com/in/muhammad-faizan-asim/"
           target="_blank"
