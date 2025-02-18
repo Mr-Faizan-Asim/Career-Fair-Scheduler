@@ -1,8 +1,7 @@
-// src/components/ScheduleList.js
 import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Container, Grid, Card, CardContent, Typography, Chip, TextField, InputAdornment } from '@mui/material';
+import { Container, Grid, Card, CardContent, Typography, Chip, TextField, InputAdornment, Box } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 export default function ScheduleList() {
@@ -21,6 +20,12 @@ export default function ScheduleList() {
   const filteredSchedules = schedules.filter(schedule =>
     schedule.company.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const checkEventStatus = (date, time) => {
+    const eventDateTime = new Date(`${date}T${time}`);
+    const now = new Date();
+    return now > eventDateTime; // true if event is done
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -52,9 +57,21 @@ export default function ScheduleList() {
                   ? 'secondary.main'
                   : schedule.eventType === 'test'
                     ? 'error.main'
-                    : 'primary.main'
+                    : 'primary.main',
+                position: 'relative'
               }}
             >
+              <Box
+                sx={{
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  backgroundColor: checkEventStatus(schedule.date, schedule.time) ? 'red' : 'transparent',
+                  position: 'absolute',
+                  top: 16,
+                  right: 16
+                }}
+              />
               <CardContent>
                 <Typography variant="h6">{schedule.company}</Typography>
                 <Typography variant="subtitle1" color="textSecondary">
