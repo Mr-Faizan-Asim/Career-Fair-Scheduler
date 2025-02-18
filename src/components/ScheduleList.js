@@ -53,7 +53,7 @@ export default function ScheduleList() {
             <Card
               sx={{
                 borderLeft: '5px solid',
-                borderColor: schedule.eventType === 'workshop'
+                borderColor: schedule.eventType === 'Interview & Test'
                   ? 'secondary.main'
                   : schedule.eventType === 'test'
                     ? 'error.main'
