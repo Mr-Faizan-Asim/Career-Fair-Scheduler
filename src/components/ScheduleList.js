@@ -110,7 +110,7 @@ export default function ScheduleList() {
       <Typography variant="h4" gutterBottom>
         Career Fair Schedule
       </Typography>
-      <Typography variant="body1" gutterBottom>
+      <Typography variant="body1" gutterBottom sx={{ mb: 2 }}>
               <strong>Venue:</strong> Main Auditorium Complex, University of Engineering & Technology (UET), Lahore
       </Typography>
       <TextField
