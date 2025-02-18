@@ -9,7 +9,7 @@ export default function Navigation() {
       <Container maxWidth="lg">
         <Toolbar disableGutters>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            UET Career Fair Scheduler
+            2025 UET CAREER FAIR
           </Typography>
           <Button color="inherit" component={Link} to="/">Schedule</Button>
           <Button color="inherit" component={Link} to="/details">Details</Button>
