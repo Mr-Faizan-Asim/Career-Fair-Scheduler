@@ -133,7 +133,7 @@ export default function ScheduleList() {
                 sx={{
                   borderLeft: '5px solid',
                   borderColor:
-                    schedule.eventType === 'workshop'
+                    schedule.eventType === 'interview'
                       ? 'secondary.main'
                       : schedule.eventType === 'test'
                       ? 'error.main'
