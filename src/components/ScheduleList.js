@@ -165,7 +165,7 @@ export default function ScheduleList() {
                   </Typography>
                   <Typography variant="body2" sx={{ mt: 1 }}>
                     {schedule.date} at {convertTo12Hour(schedule.time)} ending at{' '}
-                    {addHoursToTime(schedule.time, 3)}
+                    {addHoursToTime(schedule.time, 2.75)}
                   </Typography>
                   <Chip label={schedule.location} sx={{ mt: 1 }} />
                 </CardContent>
