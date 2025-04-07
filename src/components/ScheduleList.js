@@ -31,18 +31,42 @@ const convertTo12Hour = (timeStr) => {
 };
 
 /**
- * Adds a specified number of hours to a time string and returns the new time in 12-hour format.
+ * Adds a specified number of hours (which can be fractional) to a time string and returns the new time in 12-hour format.
  *
  * @param {string} timeStr - The original time string in "HH:mm" format.
- * @param {number} hrsToAdd - The number of hours to add.
+ * @param {number} hrsToAdd - The number of hours to add (can be fractional, e.g., 2.75).
  * @returns {string} The new time in 12-hour format.
  */
 const addHoursToTime = (timeStr, hrsToAdd) => {
-  const [hourStr, minute] = timeStr.split(':');
-  let newHour = (parseInt(hourStr, 10) + hrsToAdd) % 24;
-  // Ensure the new hour is formatted as two digits if needed.
-  const newTimeStr = `${newHour < 10 ? '0' + newHour : newHour}:${minute}`;
+  // Convert the fractional hours to total minutes.
+  const totalMinutesToAdd = Math.round(hrsToAdd * 60);
+  const [hourStr, minuteStr] = timeStr.split(':');
+  // Create a date object (the date part is arbitrary).
+  const initialDate = new Date(2000, 0, 1, parseInt(hourStr, 10), parseInt(minuteStr, 10));
+  // Add the minutes.
+  initialDate.setMinutes(initialDate.getMinutes() + totalMinutesToAdd);
+  const newHour = initialDate.getHours();
+  const newMinute = initialDate.getMinutes();
+  // Format the time string ensuring two digits for hours and minutes.
+  const newTimeStr = `${newHour < 10 ? '0' + newHour : newHour}:${newMinute < 10 ? '0' + newMinute : newMinute}`;
   return convertTo12Hour(newTimeStr);
+};
+
+/**
+ * Checks if the current time is more than 2 hours and 45 minutes past the event start time.
+ *
+ * @param {string} date - The event date in "YYYY-MM-DD" format.
+ * @param {string} time - The event start time in "HH:mm" format.
+ * @returns {boolean} True if the current time is past the event's end time.
+ */
+const checkEventStatus = (date, time) => {
+  // Parse the event start time.
+  const eventDateTime = new Date(`${date}T${time}`);
+  // Calculate event end time by adding 2 hours and 45 minutes (165 minutes).
+  const eventDurationMinutes = 165;
+  const eventEndTime = new Date(eventDateTime.getTime() + eventDurationMinutes * 60 * 1000);
+  const now = new Date();
+  return now > eventEndTime;
 };
 
 export default function ScheduleList() {
@@ -51,11 +75,11 @@ export default function ScheduleList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch data from the "ScheduleFair" collection without ordering.
+    // Fetch data from the "ScheduleFair" collection.
     const colRef = collection(db, 'ScheduleFair');
     const unsubscribe = onSnapshot(colRef, (snapshot) => {
       const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      // Sort the list on the frontend by converting the date and time into a Date object.
+      // Sort the list by converting the date and time into a Date object.
       const sortedList = list.sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.time}`);
         const dateB = new Date(`${b.date}T${b.time}`);
@@ -72,20 +96,6 @@ export default function ScheduleList() {
   const filteredSchedules = schedules.filter((schedule) =>
     schedule.company.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  /**
-   * Checks if the current time is more than one hour past the event start time.
-   *
-   * @param {string} date - The event date in "YYYY-MM-DD" format.
-   * @param {string} time - The event start time in "HH:mm" format.
-   * @returns {boolean} True if more than one hour has passed since the event started.
-   */
-  const checkEventStatus = (date, time) => {
-    const eventDateTime = new Date(`${date}T${time}`);
-    const oneHourLater = new Date(eventDateTime.getTime() + 60 * 60 * 1000);
-    const now = new Date();
-    return now > oneHourLater;
-  };
 
   // Show a loading indicator while data is being fetched.
   if (loading) {
@@ -111,7 +121,7 @@ export default function ScheduleList() {
         Career Fair Schedule
       </Typography>
       <Typography variant="body1" gutterBottom sx={{ mb: 2 }}>
-              <strong>Venue:</strong> Main Auditorium Complex, University of Engineering & Technology (UET), Lahore
+        <strong>Venue:</strong> Main Auditorium Complex, University of Engineering & Technology (UET), Lahore
       </Typography>
       <TextField
         fullWidth
@@ -144,7 +154,7 @@ export default function ScheduleList() {
                   position: 'relative'
                 }}
               >
-                {/* Red dot indicator if event is past one hour from start */}
+                {/* Red dot indicator if event is past the end time (2 hours 45 minutes after start) */}
                 <Box
                   sx={{
                     width: 16,
