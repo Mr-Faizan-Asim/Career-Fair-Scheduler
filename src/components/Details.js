@@ -36,7 +36,7 @@ export default function Details() {
         <Paper elevation={3} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body1" gutterBottom>
-              <strong>Date:</strong> 20th February 2025
+              <strong>Date:</strong> 9th April 2025
             </Typography>
             <Typography variant="body1" gutterBottom>
               <strong>Time:</strong> 9:00 AM - 4:30 PM
